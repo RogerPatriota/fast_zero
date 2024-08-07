@@ -12,11 +12,11 @@ from fast_zero.models import table_registry
 def client(session):
     def get_session_override():
         return session
-    
+
     with TestClient(app) as client:
         app.dependency_overrides[get_session] = get_session_override
         yield client
-    
+
     app.dependency_overrides.clear()
 
 

@@ -35,14 +35,14 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
         if db_user.username == user.username:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail="User already exists"
+                detail='User name already exists',
             )
         elif db_user == user.email:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail="User email already exists"
+                detail='User email already exists',
             )
-    
+
     db_user = User(
         username=user.username, password=user.password, email=user.email
     )
