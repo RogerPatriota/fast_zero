@@ -22,7 +22,7 @@ def test_root_app(client):
 
 def test_create_user(client):
     response = client.post(
-        '/users/',  # url
+        '/users',  # url
         json={  # body
             'username': 'Roger',
             'email': 'roger.santos@gmail.com',

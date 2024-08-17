@@ -23,7 +23,7 @@ def read_users():
     return {'users': database}
 
 
-@app.post('/users/', response_model=UserPublic, status_code=HTTPStatus.CREATED)
+@app.post('/users', response_model=UserPublic, status_code=HTTPStatus.CREATED)
 def create_user(user: UserSchema, session: Session = Depends(get_session)):
     db_user = session.scalar(
         select(User).where(
