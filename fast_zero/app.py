@@ -19,11 +19,15 @@ def read_root():
 
 
 @app.get('/users/', response_model=UserList, status_code=HTTPStatus.OK)
-def read_users():
-    return {'users': database}
+def read_users(
+    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)  #www.zzzz/users/
+):
+    users = session.scalar(select(User).offset(skip).limit(limit)).all()
+
+    return {'users': users}
 
 
-@app.post('/users', response_model=UserPublic, status_code=HTTPStatus.CREATED)
+@app.post('/users/', response_model=UserPublic, status_code=HTTPStatus.CREATED)
 def create_user(user: UserSchema, session: Session = Depends(get_session)):
     db_user = session.scalar(
         select(User).where(
