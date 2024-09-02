@@ -20,9 +20,9 @@ def read_root():
 
 @app.get('/users/', response_model=UserList, status_code=HTTPStatus.OK)
 def read_users(
-    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)  #www.zzzz/users/
+    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)
 ):
-    users = session.scalar(select(User).offset(skip).limit(limit)).all()
+    users = session.scalars(select(User).offset(skip).limit(limit)).all()
 
     return {'users': users}
 

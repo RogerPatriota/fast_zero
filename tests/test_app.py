@@ -1,15 +1,5 @@
 from http import HTTPStatus
 
-import pytest
-from fastapi.testclient import TestClient
-
-from fast_zero.app import app
-
-
-@pytest.fixture()
-def client():
-    return TestClient(app)  # arrange - Set up the object to be tested
-
 
 def test_root_app(client):
     response = client.get('/')  # act - Act on the object (simulate a request)
@@ -25,14 +15,14 @@ def test_create_user(client):
         '/users',  # url
         json={  # body
             'username': 'Roger',
-            'email': 'roger.santos@gmail.com',
+            'email': 'roger.santos@global.com',
             'password': 'secret',
         },
     )
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
         'username': 'Roger',
-        'email': 'roger.santos@gmail.com',
+        'email': 'roger.santos@global.com',
         'id': 1,
     }
 
