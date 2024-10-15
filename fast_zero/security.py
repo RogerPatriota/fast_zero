@@ -32,3 +32,6 @@ def create_access_token(data_payload: dict):
 
     encode_jwt = encode(to_encode, SERCET_KEY, algorithm=ALGORITHM)
     return encode_jwt
+
+def get_current_user()
+    ...

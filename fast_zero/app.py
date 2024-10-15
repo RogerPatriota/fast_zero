@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
 from fast_zero.models import User
-from fast_zero.schemas import Message, UserList, UserPublic, UserSchema
+from fast_zero.schemas import Message, UserList, UserPublic, UserSchema, Token
 from fast_zero.security import (
     create_access_token,
     get_password_hash,
@@ -97,7 +97,7 @@ def delete_user(user_id: int, session: Session = Depends(get_session)):
     return {'message': 'User deleted'}
 
 
-@app.post('/token')
+@app.post('/token', response_model=Token)
 def generate_token(  # Depends empyt make the fastapi respect the obj type
     form_data: OAuth2PasswordRequestForm = Depends(),  # Form with user/pass
     session: Session = Depends(get_session),
