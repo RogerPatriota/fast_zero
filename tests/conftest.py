@@ -51,3 +51,11 @@ def user(session):
     user.clen_password = pwd
 
     return user
+
+
+@pytest.fixture()
+def token(client, user):
+    response = client.post(
+        '/token', data={'username': user.email, 'password': user.clen_password}
+    )
+    return response.json()['access_token']
