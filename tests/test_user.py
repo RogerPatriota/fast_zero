@@ -20,13 +20,13 @@ def test_create_user(client):
     }
 
 
-def test_create_same_user(client):
+def test_create_same_user(client, user):
     response = client.post(
         '/users',
         json={
-            'username': 'Teste',
-            'email': 'teste@test.com',
-            'password': 'senha',
+            'username': user.username,
+            'email': user.email,
+            'password': user.password,
         },
     )
     assert response.status_code == HTTPStatus.BAD_REQUEST

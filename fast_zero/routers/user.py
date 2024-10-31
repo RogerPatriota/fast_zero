@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -6,7 +7,12 @@ from sqlalchemy.orm import Session
 
 from fast_zero.database import get_session
 from fast_zero.models import User
-from fast_zero.schemas import Message, UserList, UserPublic, UserSchema
+from fast_zero.schemas import (
+    Message,
+    UserList,
+    UserPublic,
+    UserSchema,
+)
 from fast_zero.security import (
     get_current_user,
     get_password_hash,
@@ -15,6 +21,10 @@ from fast_zero.security import (
 # the prefix is used to group all the routes related to the user
 # the tag is used to improve the documentation
 router = APIRouter(prefix='/users', tags=['Users'])
+
+T_Session = Annotated[Session, Depends(get_session)]
+T_CurrentUser = Annotated[Session, Depends(get_current_user)]
+# T_Filter = Annotated[FilterPage, Query()]
 
 
 @router.get('/', response_model=UserList, status_code=HTTPStatus.OK)
@@ -27,7 +37,7 @@ def read_users(
 
 
 @router.post('/', response_model=UserPublic, status_code=HTTPStatus.CREATED)
-def create_user(user: UserSchema, session: Session = Depends(get_session)):
+def create_user(user: UserSchema, session: T_Session):
     db_user = session.scalar(
         select(User).where(
             (User.username == user.username) | (User.email == user.email)
@@ -35,7 +45,7 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
     )
 
     if db_user:
-        if db_user.username == user.username or db_user == user.email:
+        if db_user.username == user.username or db_user.email == user.email:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail='User name or email already exists',
@@ -55,10 +65,10 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
 
 @router.put('/{user_id}', response_model=UserPublic)
 def update_user(
+    current_user: T_CurrentUser,
     user_id: int,
     user: UserSchema,
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    session: T_Session,
 ):
     if user_id != current_user.id:
         raise HTTPException(
@@ -78,9 +88,9 @@ def update_user(
 
 @router.delete('/{user_id}', response_model=Message)
 def delete_user(
+    current_user: T_CurrentUser,
     user_id: int,
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    session: T_Session,
 ):
     if user_id != current_user.id:
         raise HTTPException(

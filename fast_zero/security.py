@@ -11,10 +11,7 @@ from zoneinfo import ZoneInfo
 
 from fast_zero.database import get_session
 from fast_zero.models import User
-
-SERCET_KEY = ''
-ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+from fast_zero.settings import Settings
 
 # Lets protect the user password
 pwd_context = PasswordHash.recommended()
@@ -36,11 +33,11 @@ def create_access_token(data_payload: dict):
     to_encode = data_payload.copy()
 
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES
     )
     to_encode.update({'exp': expire})
 
-    encode_jwt = encode(to_encode, SERCET_KEY, algorithm=ALGORITHM)
+    encode_jwt = encode(to_encode, Settings().SERCET_KEY, algorithm=Settings().ALGORITHM)
 
     return encode_jwt
 
