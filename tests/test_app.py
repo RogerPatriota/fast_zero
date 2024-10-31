@@ -105,7 +105,8 @@ def test_not_delete_user(client, token):
 
 def test_get_token(client, user):
     response = client.post(
-        '/token', data={'username': user.email, 'password': user.clen_password}
+        'auth/token',
+        data={'username': user.email, 'password': user.clen_password},
     )
     token = response.json()
     assert response.status_code == HTTPStatus.OK
@@ -115,7 +116,7 @@ def test_get_token(client, user):
 
 def test_not_get_token(client):
     response = client.post(
-        '/token', data={'username': 'roge', 'password': '234'}
+        'auth/token', data={'username': 'roge', 'password': '234'}
     )
 
     token = response.json()

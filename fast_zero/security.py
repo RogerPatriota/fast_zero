@@ -19,7 +19,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # Lets protect the user password
 pwd_context = PasswordHash.recommended()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
 def get_password_hash(password: str):
@@ -41,6 +41,7 @@ def create_access_token(data_payload: dict):
     to_encode.update({'exp': expire})
 
     encode_jwt = encode(to_encode, SERCET_KEY, algorithm=ALGORITHM)
+
     return encode_jwt
 
 
