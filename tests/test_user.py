@@ -86,9 +86,9 @@ def test_delete_user(client, user, token):
     assert response.json() == {'message': 'User deleted'}
 
 
-def test_not_delete_user(client, token):
+def test_not_delete_user(client, user, token):
     response = client.delete(
-        'users/4', headers={'Authorization': f'Bearer {token}'}
+        f'users/{user.id + 1}', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.json() == {'detail': 'Not enough permission'}

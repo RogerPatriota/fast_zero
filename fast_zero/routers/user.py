@@ -28,9 +28,7 @@ T_CurrentUser = Annotated[Session, Depends(get_current_user)]
 
 
 @router.get('/', response_model=UserList, status_code=HTTPStatus.OK)
-def read_users(
-    skip: int = 0, limit: int = 100, session: Session = Depends(get_session)
-):
+def read_users(session: T_Session, skip: int = 0, limit: int = 100):
     users = session.scalars(select(User).offset(skip).limit(limit)).all()
 
     return {'users': users}
