@@ -56,7 +56,7 @@ def user(session):
     session.commit()
     session.refresh(user)
 
-    user.clen_password = pwd  # Monkey patch
+    user.clean_password = pwd  # Monkey patch
 
     return user
 
@@ -71,7 +71,7 @@ def other_user(session):
     session.commit()
     session.refresh(user)
 
-    user.clen_password = pwd  # Monkey patch
+    user.clean_password = pwd  # Monkey patch
 
     return user
 
@@ -80,6 +80,6 @@ def other_user(session):
 def token(client, user):
     response = client.post(
         'auth/token',
-        data={'username': user.email, 'password': user.clen_password},
+        data={'username': user.email, 'password': user.clean_password},
     )
     return response.json()['access_token']
