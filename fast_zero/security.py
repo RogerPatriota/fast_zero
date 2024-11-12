@@ -66,7 +66,7 @@ def get_current_user(
 
     user_db = session.scalar(Select(User).where(User.email == username))
 
-    if not username and user_db is None:
+    if not username or user_db is None:
         raise credential_exception
 
     return user_db

@@ -16,7 +16,7 @@ class UserFactory(factory.Factory):
 
     username = factory.Sequence(lambda n: f'test-{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
-    password = factory.LazyAttribute(lambda obj: f'{obj.usename}@')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}@')
 
 
 @pytest.fixture()
@@ -48,6 +48,21 @@ def session():
 
 @pytest.fixture()
 def user(session):
+    pwd = 'senha'
+
+    user = UserFactory(password=get_password_hash(pwd))
+
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    user.clen_password = pwd  # Monkey patch
+
+    return user
+
+
+@pytest.fixture()
+def other_user(session):
     pwd = 'senha'
 
     user = UserFactory(password=get_password_hash(pwd))

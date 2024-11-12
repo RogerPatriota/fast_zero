@@ -12,9 +12,10 @@ def test_get_token(client, user):
     assert 'access_token' in token
 
 
-def test_not_get_token(client):
+def test_not_get_token(client, other_user):
     response = client.post(
-        'auth/token', data={'username': 'roge', 'password': '234'}
+        'auth/token',
+        data={'username': f'{other_user.id}', 'password': f'{other_user.id}'},
     )
 
     token = response.json()
