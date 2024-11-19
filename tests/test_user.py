@@ -29,7 +29,8 @@ def test_create_same_user(client, user):
             'password': user.password,
         },
     )
-    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'User name or email already exists'}
 
 
 def test_read_users(client):
@@ -45,21 +46,21 @@ def test_read_users_with_user(client, user):
     assert response.json() == {'users': [user_schema]}
 
 
-def test_update_user(client, user, token):
+def test_update_user(client, user, other_user, token):
     response = client.put(
         f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
-            'username': 'bob',
-            'email': 'bob@example.com',
-            'password': 'mynewpassword',
+            'username': f'r{other_user.username}',
+            'email': f'r{other_user.email}',
+            'password': f'r{other_user.clean_password}',
         },
     )
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'username': 'bob',
-        'email': 'bob@example.com',
-        'id': 1,
+        'username': f'r{other_user.username}',
+        'email': f'r{other_user.email}',
+        'id': user.id,
     }
 
 
@@ -76,6 +77,21 @@ def test_not_update_user(client, other_user, token):
 
     assert response.status_code == HTTPStatus.FORBIDDEN
     assert response.json() == {'detail': 'Not enough permission'}
+
+
+def test_not_update_same_user(client, user, other_user, token):
+    response = client.put(
+        f'/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'username': f'{other_user.username}',
+            'email': f'{other_user.email}',
+            'password': f'{other_user.clean_password}',
+        },
+    )
+
+    assert response.status_code == HTTPStatus.CONFLICT
+    assert response.json() == {'detail': 'User name or email already exists'}
 
 
 def test_delete_user(client, user, token):

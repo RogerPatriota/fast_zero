@@ -43,11 +43,10 @@ def create_user(user: UserSchema, session: T_Session):
     )
 
     if db_user:
-        if db_user.username == user.username or db_user.email == user.email:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='User name or email already exists',
-            )
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='User name or email already exists',
+        )
 
     db_user = User(
         username=user.username,
@@ -71,6 +70,18 @@ def update_user(
     if user_id != current_user.id:
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN, detail='Not enough permission'
+        )
+
+    db_user = session.scalar(
+        select(User).where(
+            (User.username == user.username) | (User.email == user.email)
+        )
+    )
+
+    if db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='User name or email already exists',
         )
 
     current_user.username = user.username
