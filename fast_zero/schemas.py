@@ -1,5 +1,7 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
 
+from fast_zero.models import TodoState
+
 # Here is the models of the responses, what the API expected from each request
 
 
@@ -36,3 +38,13 @@ class TokenData(BaseModel):
 class FilterPage(BaseModel):
     offset: int = 0
     limit: int = 100
+
+
+class TodoSchema(BaseModel):
+    title: str
+    description: str
+    state: TodoState
+
+
+class TodoPublic(TodoSchema):
+    id: int

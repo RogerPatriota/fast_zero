@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from fast_zero.app import app
 from fast_zero.database import get_session
-from fast_zero.models import User, table_registry
+from fast_zero.models import Todo, TodoState, User, table_registry
 from fast_zero.security import get_password_hash
 
 
@@ -17,6 +17,16 @@ class UserFactory(factory.Factory):
     username = factory.Sequence(lambda n: f'test-{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
     password = factory.LazyAttribute(lambda obj: f'{obj.username}@')
+
+
+class TodoFactory(factory.Factory):
+    class Meta:
+        model = Todo
+
+    id = factory.Sequence(lambda n: n)
+    itle = factory.Sequence(lambda n: f'todo-{n}')
+    descrption = factory.LazyAttribute(lambda obj: f'{obj.title} description')
+    state = factory.Iterator(TodoState)
 
 
 @pytest.fixture()
@@ -83,3 +93,14 @@ def token(client, user):
         data={'username': user.email, 'password': user.clean_password},
     )
     return response.json()['access_token']
+
+
+@pytest.fixture()
+def todo(session, user):
+    todo = TodoFactory(id=user.id)
+
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+
+    return todo

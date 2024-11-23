@@ -23,7 +23,7 @@ from fast_zero.security import (
 router = APIRouter(prefix='/users', tags=['Users'])
 
 T_Session = Annotated[Session, Depends(get_session)]
-T_CurrentUser = Annotated[Session, Depends(get_current_user)]
+T_CurrentUser = Annotated[User, Depends(get_current_user)]
 # T_Filter = Annotated[FilterPage, Query()]
 
 
