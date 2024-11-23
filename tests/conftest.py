@@ -23,10 +23,10 @@ class TodoFactory(factory.Factory):
     class Meta:
         model = Todo
 
-    id = factory.Sequence(lambda n: n)
-    itle = factory.Sequence(lambda n: f'todo-{n}')
-    descrption = factory.LazyAttribute(lambda obj: f'{obj.title} description')
-    state = factory.Iterator(TodoState)
+    title = factory.Faker('text')
+    description = factory.Faker('text')
+    state = factory.fuzzy.FuzzyChoice(TodoState)
+    user_id = factory.sequence(lambda n: n)
 
 
 @pytest.fixture()
@@ -97,7 +97,7 @@ def token(client, user):
 
 @pytest.fixture()
 def todo(session, user):
-    todo = TodoFactory(id=user.id)
+    todo = TodoFactory(user_id=user.id)
 
     session.add(todo)
     session.commit()

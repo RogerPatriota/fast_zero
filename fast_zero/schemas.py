@@ -48,3 +48,14 @@ class TodoSchema(BaseModel):
 
 class TodoPublic(TodoSchema):
     id: int
+    user_id: int
+
+
+class TodoList(BaseModel):
+    todos: list[TodoPublic]
+
+
+class TodoFilter(FilterPage):
+    title: str | None = None
+    description: str | None = None
+    state: str | None = None
