@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from fast_zero.models import TodoState
 
@@ -36,8 +36,8 @@ class TokenData(BaseModel):
 
 
 class FilterPage(BaseModel):
-    offset: int = 0
-    limit: int = 100
+    offset: int = Field(0, ge=0)
+    limit: int = Field(100, gt=0, le=100)
 
 
 class TodoSchema(BaseModel):
@@ -56,6 +56,6 @@ class TodoList(BaseModel):
 
 
 class TodoFilter(FilterPage):
-    title: str | None = None
-    description: str | None = None
-    state: str | None = None
+    title: str | None = Field(None)
+    description: str = Field(None)
+    state: str | None = Field(None)

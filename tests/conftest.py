@@ -24,7 +24,7 @@ class TodoFactory(factory.Factory):
         model = Todo
 
     title = factory.Faker('text')
-    description = factory.Faker('text')
+    description = factory.Fu
     state = factory.fuzzy.FuzzyChoice(TodoState)
     user_id = factory.sequence(lambda n: n)
 

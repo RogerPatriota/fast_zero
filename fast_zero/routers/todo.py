@@ -21,10 +21,12 @@ T_Filter = Annotated[TodoFilter, Query()]
 def read_todos(
     session: T_Session,
     current_user: T_CurrentUser,
-    todo_filter: T_Filter,
+    todo_filter: Annotated[TodoFilter, Query()],
 ):
     todo_query = select(Todo).where(Todo.user_id == current_user.id)
 
+    # check if any filter was send withe the endp (title...)
+    # if so, add to the db query
     if todo_filter.title:
         todo_query = todo_query.filter(Todo.title.contains(todo_filter.title))
     if todo_filter.description:
