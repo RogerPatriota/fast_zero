@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from .conftest import TodoFactory
 
 
@@ -15,7 +17,6 @@ def test_read_todo_without_filter(session, client, token, user):
 
 
 def test_read_todo_with_filters(session, client, token, user, todo):
-
     session.bulk_save_objects(TodoFactory.create_batch(3, user_id=user.id))
     session.commit()
 
@@ -23,7 +24,7 @@ def test_read_todo_with_filters(session, client, token, user, todo):
         f'/todo/?title={todo.title[0:8]}&description={todo.description[0:3]}&state={todo.state.value}',
         headers={'Authorization': f'Bearer {token}'},
     )
-    print(response.json()['todos'])
+
     assert response.json()['todos'][0] == {
         'title': f'{todo.title}',
         'description': f'{todo.description}',
@@ -51,3 +52,25 @@ def test_create_todo(client, token, user):
         'id': 1,
         'user_id': user.id,
     }
+
+
+def test_update_task(client, user, token, todo):
+    response = client.patch(
+        f'todo/{todo.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json={
+            'title': 'New Task'
+        }
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json()['title'] == 'New Task'
+
+
+def test_update_task_wrong_id(client, token):
+    response = client.patch(
+        'todo/10', headers={'Authorization': f'Bearer {token}'}, json={}
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Not found'}

@@ -58,4 +58,10 @@ class TodoList(BaseModel):
 class TodoFilter(FilterPage):
     title: str | None = Field(None)
     description: str = Field(None)
-    state: str | None = Field(None)
+    state: TodoState | None = Field(None)
+
+
+class TodoPatch(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    state: TodoState | None = None
