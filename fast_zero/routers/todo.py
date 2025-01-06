@@ -25,7 +25,7 @@ def read_todos(
 ):
     todo_query = select(Todo).where(Todo.user_id == current_user.id)
 
-    # check if any filter was send withe the endp (title...)
+    # check if any filter was send with the endp (title...)
     # if so, add to the db query
     if todo_filter.title:
         todo_query = todo_query.filter(Todo.title.contains(todo_filter.title))
@@ -34,7 +34,9 @@ def read_todos(
             Todo.description.contains(todo_filter.description)
         )
     if todo_filter.state:
-        todo_query = todo_query.filter(Todo.state == todo_filter.state)
+        todo_query = todo_query.filter(
+            Todo.state == todo_filter.state
+        )
 
     todos = session.scalars(
         todo_query.offset(todo_filter.offset).limit(todo_filter.limit)

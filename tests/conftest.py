@@ -1,4 +1,5 @@
 import factory
+import factory.fuzzy
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool, create_engine
@@ -24,7 +25,7 @@ class TodoFactory(factory.Factory):
         model = Todo
 
     title = factory.Faker('text')
-    description = factory.Fu
+    description = factory.Faker('text')
     state = factory.fuzzy.FuzzyChoice(TodoState)
     user_id = factory.sequence(lambda n: n)
 
