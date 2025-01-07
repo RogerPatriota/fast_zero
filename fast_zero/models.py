@@ -30,10 +30,6 @@ class User:
         init=False, onupdate=func.now(), nullable=True
     )
 
-    """todo: Mapped[list['Todo']] = relationship(
-        init=False, back_populates='user', cascade='all, delete-orphan'
-    )"""
-
 
 @table_registry.mapped_as_dataclass
 class Todo:
@@ -46,8 +42,9 @@ class Todo:
     create_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+    updated_at: Mapped[datetime] = mapped_column(
+        init=False, onupdate=func.now(), nullable=True
+    )
 
     # ForeignKey refer to the User table name
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-
-    # user: Mapped[User] = relationship(init=False, back_populates='todos')
