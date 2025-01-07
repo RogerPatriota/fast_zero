@@ -9,9 +9,7 @@ def test_read_todo_without_filter(session, client, token, user):
         TodoFactory.create_batch(expected_todos, user_id=user.id)
     )
 
-    response = client.get(
-        '/todo/', headers={'Authorization': f'Bearer {token}'}
-    )
+    response = client.get('/todo/', headers={'Authorization': f'Bearer {token}'})
 
     assert len(response.json()['todos']) == expected_todos
 
@@ -58,9 +56,7 @@ def test_update_task(client, user, token, todo):
     response = client.patch(
         f'todo/{todo.id}',
         headers={'Authorization': f'Bearer {token}'},
-        json={
-            'title': 'New Task'
-        }
+        json={'title': 'New Task'},
     )
 
     assert response.status_code == HTTPStatus.OK
@@ -74,3 +70,21 @@ def test_update_task_wrong_id(client, token):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {'detail': 'Not found'}
+
+
+def test_delete_task(client, token, todo):
+    response = client.delete(
+        f'todo/{todo.id}', headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {'message': 'Task deleted'}
+
+
+def test_delete_err(client, token):
+    response = client.delete('todo/10', headers={'Authorization': f'Bearer {token}'})
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {
+        'detail': 'Not found or do not has enough permission to delete'
+    }

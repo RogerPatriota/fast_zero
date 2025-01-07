@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from fast_zero.database import get_session
 from fast_zero.models import Todo, User
 from fast_zero.schemas import (
+    Message,
     TodoFilter,
     TodoList,
     TodoPatch,
@@ -50,9 +51,7 @@ def read_todos(
 
 
 @router.post('/', response_model=TodoPublic)
-def create_todo(
-    session: T_Session, current_user: T_CurrentUser, todo: TodoSchema
-):
+def create_todo(session: T_Session, current_user: T_CurrentUser, todo: TodoSchema):
     db_todo = Todo(
         title=todo.title,
         description=todo.description,
@@ -79,9 +78,7 @@ def update_todo(
     )
 
     if not db_todo:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Not found'
-        )
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Not found')
     # the model take the schema an change to a json(dump)
     # the exclude, see what keys was not send in the payload
     # with only the field(k) and the new data(v)
@@ -94,3 +91,21 @@ def update_todo(
     session.refresh(db_todo)
 
     return db_todo
+
+
+@router.delete('/{todo_id}', response_model=Message, status_code=HTTPStatus.OK)
+def delete_todo(session: T_Session, current_user: T_CurrentUser, todo_id: int):
+    db_todo = session.scalar(
+        select(Todo).where(Todo.id == todo_id, Todo.user_id == current_user.id)
+    )
+
+    if not db_todo:
+        raise HTTPException(
+            HTTPStatus.NOT_FOUND,
+            detail='Not found or do not has enough permission to delete',
+        )
+
+    session.delete(db_todo)
+    session.commit()
+
+    return {'message': 'Task deleted'}

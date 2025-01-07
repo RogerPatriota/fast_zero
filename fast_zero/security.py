@@ -39,9 +39,7 @@ def create_access_token(data_payload: dict):
     )
     to_encode.update({'exp': expire})
 
-    encode_jwt = encode(
-        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
-    )
+    encode_jwt = encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
     return encode_jwt
 
@@ -57,9 +55,7 @@ def get_current_user(
     )
 
     try:
-        payload = decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         username: str = payload.get('sub')
     except DecodeError:
         raise credential_exception
@@ -67,8 +63,5 @@ def get_current_user(
         raise credential_exception
 
     user_db = session.scalar(Select(User).where(User.email == username))
-
-    if not username or user_db is None:
-        raise credential_exception
 
     return user_db

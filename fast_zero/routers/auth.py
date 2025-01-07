@@ -29,9 +29,7 @@ def generate_token(
     user = session.scalar(select(User).where(User.email == form_data.username))
 
     if not user or not verify_password(form_data.password, user.password):
-        raise HTTPException(
-            status_code=400, detail='Incorrect email or password'
-        )
+        raise HTTPException(status_code=400, detail='Incorrect email or password')
 
     access_token = create_access_token(data_payload={'sub': user.email})
 
@@ -40,8 +38,6 @@ def generate_token(
 
 @router.post('/refresh_token', response_model=Token)
 def refresh_token(current_user: T_CurrentUser):
-    new_access_token = create_access_token(
-        data_payload={'sub': current_user.email}
-    )
+    new_access_token = create_access_token(data_payload={'sub': current_user.email})
 
     return {'access_token': new_access_token, 'token_type': 'Bearer'}
