@@ -50,7 +50,7 @@ class TodoSchema(BaseModel):
 class TodoPublic(TodoSchema):
     id: int
     user_id: int
-    create_at: datetime
+    created_at: datetime
     updated_at: datetime | None = None
 
 
