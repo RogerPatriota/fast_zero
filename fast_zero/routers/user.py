@@ -37,9 +37,7 @@ def read_users(session: T_Session, skip: int = 0, limit: int = 100):
 @router.post('/', response_model=UserPublic, status_code=HTTPStatus.CREATED)
 def create_user(user: UserSchema, session: T_Session):
     db_user = session.scalar(
-        select(User).where(
-            (User.username == user.username) | (User.email == user.email)
-        )
+        select(User).where((User.username == user.username) | (User.email == user.email))
     )
 
     if db_user:
@@ -73,9 +71,7 @@ def update_user(
         )
 
     db_user = session.scalar(
-        select(User).where(
-            (User.username == user.username) | (User.email == user.email)
-        )
+        select(User).where((User.username == user.username) | (User.email == user.email))
     )
 
     if db_user:

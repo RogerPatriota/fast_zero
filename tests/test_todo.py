@@ -5,9 +5,7 @@ from .conftest import TodoFactory
 
 def test_read_todo_without_filter(session, client, token, user):
     expected_todos = 4
-    session.bulk_save_objects(
-        TodoFactory.create_batch(expected_todos, user_id=user.id)
-    )
+    session.bulk_save_objects(TodoFactory.create_batch(expected_todos, user_id=user.id))
 
     response = client.get('/todo/', headers={'Authorization': f'Bearer {token}'})
 
@@ -23,6 +21,7 @@ def test_read_todo_with_filters(session, client, token, user, todo):
         headers={'Authorization': f'Bearer {token}'},
     )
 
+    assert len(response.json()['todos']) == 1
     assert response.json()['todos'][0] == {
         'title': f'{todo.title}',
         'description': f'{todo.description}',

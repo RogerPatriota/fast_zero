@@ -13,6 +13,7 @@ from fast_zero.schemas import (
     TodoList,
     TodoPatch,
     TodoPublic,
+    TodoPublicPatch,
     TodoSchema,
 )
 from fast_zero.security import get_current_user
@@ -37,9 +38,7 @@ def read_todos(
     if todo_filter.title:
         todo_query = todo_query.filter(Todo.title.contains(todo_filter.title))
     if todo_filter.description:
-        todo_query = todo_query.filter(
-            Todo.description.contains(todo_filter.description)
-        )
+        todo_query = todo_query.filter(Todo.description.contains(todo_filter.description))
     if todo_filter.state:
         todo_query = todo_query.filter(Todo.state == todo_filter.state)
 
@@ -66,7 +65,7 @@ def create_todo(session: T_Session, current_user: T_CurrentUser, todo: TodoSchem
     return db_todo
 
 
-@router.patch('/{todo_id}', response_model=TodoPublic, status_code=HTTPStatus.OK)
+@router.patch('/{todo_id}', response_model=TodoPublicPatch, status_code=HTTPStatus.OK)
 def update_todo(
     session: T_Session,
     current_user: T_CurrentUser,
