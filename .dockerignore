@@ -183,7 +183,7 @@ site
 **\.env
 **\database.db
 **\.coverage
-tests/
+**\tests
 
 # flyctl launch added from .pytest_cache\.gitignore
 # Created by pytest automatically.
